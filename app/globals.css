@@ -25,11 +25,13 @@ body{
 
 .banner-1{
   margin-top: 3rem;
+  height: 100vh;
 }
 
 @media (max-width: 768px) {
   .banner-1{
     margin-top: 0.6rem;
+    height: 40vh;
   }
 }
 
@@ -47,7 +49,6 @@ body{
 /* globals.css */
 .banner-image {
   width: 100%;
-  height: 100%;
   object-fit: cover;
   /* Ensures the image covers the div */
 }

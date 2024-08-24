@@ -85,7 +85,7 @@ const Navbar = () => {
             </Link>
             <Link href="/orders" className="flex flex-col items-center text-black hover:text-gray-600">
               <FaClipboardList size={24} />
-              <span>Orders</span>
+              <span>Procuts</span>
             </Link>
             <button
               onClick={() => setIsDrawerOpen(true)}
@@ -103,9 +103,7 @@ const Navbar = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 transition-transform duration-300 transform translate-y-0">
             <div className="flex flex-col space-y-4">
-              <Link href="/products" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Products</Link>
               <Link href="/wishlist" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Wishlist</Link>
-              <Link href="/checkout" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Checkout</Link>
               <Link href="/about" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>About</Link>
               <Link href="/contact" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Contact</Link>
             </div>

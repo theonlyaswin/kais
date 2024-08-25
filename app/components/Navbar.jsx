@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { FaHome, FaClipboardList, FaEllipsisH, FaSearch, FaShoppingCart } from 'react-icons/fa';
+import { FaHome, FaEllipsisH, FaSearch, FaShoppingCart , FaShoppingBag, FaHeart } from 'react-icons/fa';
 
 const Navbar = () => {
   const router = useRouter();
@@ -83,39 +83,25 @@ const Navbar = () => {
               <FaHome size={24} />
               <span>Home</span>
             </Link>
-            <Link href="/orders" className="flex flex-col items-center text-black hover:text-gray-600">
-              <FaClipboardList size={24} />
+            <Link href="/products" className="flex flex-col items-center text-black hover:text-gray-600">
+              <FaShoppingBag size={24} />
               <span>Procuts</span>
             </Link>
             <button
               onClick={() => setIsDrawerOpen(true)}
               className="flex flex-col items-center text-black hover:text-gray-600"
             >
-              <FaEllipsisH size={24} />
-              <span>More</span>
+              <Link href="/wishlist" className="flex flex-col items-center text-black hover:text-gray-600">
+              <FaHeart size={24} />
+              <span>Wishlist</span>
+              </Link>
             </button>
           </div>
         </div>
       )}
 
       {/* Drawer */}
-      {isDrawerOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 transition-transform duration-300 transform translate-y-0">
-            <div className="flex flex-col space-y-4">
-              <Link href="/wishlist" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Wishlist</Link>
-              <Link href="/about" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>About</Link>
-              <Link href="/contact" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Contact</Link>
-            </div>
-            <button
-              onClick={() => setIsDrawerOpen(false)}
-              className="mt-4 w-full bg-gray-200 text-black py-2 rounded-md hover:bg-gray-300"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      
 
       {/* Spacer for mobile to prevent content from being hidden behind the bottom nav */}
       {isMobile && <div className="h-16"></div>}

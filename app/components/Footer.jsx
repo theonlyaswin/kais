@@ -7,7 +7,7 @@ import { SiPhonepe, SiGooglepay, SiPaytm, SiVisa, SiMastercard } from 'react-ico
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-8">
+    <footer className="bg-black text-white py-8 mt-auto">
       <div className="container mx-auto px-4 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start mb-8">
           <div className="mb-4 md:mb-0">

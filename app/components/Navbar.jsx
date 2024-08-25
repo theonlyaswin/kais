@@ -24,7 +24,7 @@ const Navbar = () => {
     e.preventDefault();
 
     if (searchQuery.trim()) {
-      router.push(`/products?search=${searchQuery.trim()}`);
+      router.push(`/search/${searchQuery.trim()}`);
     } else {
 
     }

@@ -96,8 +96,9 @@ useEffect(() => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="sec-height banner-1 w-full bg-black text-white mb-8 overflow-hidden">
-  <img src="/banner1.png" alt="banner" className="banner-image" />
+  <img src="https://images.pexels.com/photos/135620/pexels-photo-135620.jpeg" alt="banner" className="w-full h-full object-cover" />
 </div>
+
 
       <div className=" flex justify-start md:justify-center overflow-x-auto whitespace-nowrap gap-3 md:gap-3 relative m-8 scrollbar-hide" >
         {category_images.slice(0, 4).map((src, index) => (
@@ -111,8 +112,8 @@ useEffect(() => {
       </div>
 
       <div className="mb-8">
-        <video className="w-full" controls preload="none">
-          <source src="/path/to/video.mp4" type="video/mp4" />
+        <video className="w-full" autoPlay  loop muted controls preload="none">
+          <source src="/shop.mp4" type="video/mp4" />
           <track src="/path/to/captions.vtt" kind="subtitles" srcLang="en" label="English" />
           Your browser does not support the video tag.
         </video>
@@ -164,8 +165,9 @@ useEffect(() => {
       </div>
 
       <div className="sec-height banner-1 w-full bg-black text-white mb-8 overflow-hidden">
-  <img src="/banner1.png" alt="banner" className="banner-image" />
+  <img src="https://images.pexels.com/photos/135620/pexels-photo-135620.jpeg" alt="banner" className="w-full h-full object-cover" />
 </div>
+
 
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Customer Feedback</h2>

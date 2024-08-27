@@ -152,16 +152,60 @@ const handlePlaceOrder = async (e) => {
 
     // Format the order details for WhatsApp message
     const message = `Hi, an order for Kai's Lifestyle Studios\n` +
-                    `Order ID: ${orderId}\n` +
-                    `Name: ${formData.name}\n` +
-                    `Total Amount: ${totalPrice}`;
+                    `Order ID: ${orderId}\n` + `and I would ike to continue the payment to deliver my order.`
 
     // Encode the message to be URL-safe
     const encodedMessage = encodeURIComponent(message);
 
-    // WhatsApp URL
-    router.push('/products');
-    const whatsappUrl = `https://wa.me/+919074430171?text=${encodedMessage}`;
+    
+    const makeCall = async () => {
+  const accountSid = 'ACfc874a169c3846935b075dc5f217ba34';
+  const authToken = 'c330a10ea93c1eaf4255e03176940120';
+  const twilioPhoneNumber = '+16366424846';
+  const recipientPhoneNumber = '+918089718880';
+
+  const twiml = `
+    <Response>
+      <Say>Hello! You Have Received an Order From Kays Lifestyle , Please Check on Admin Panel to Confirm Order.</Say>
+      <Pause length="1"/>
+      <Say> I Repeat</Say>
+      <Pause length="1"/>
+      <Say>You have received an order from kays lifestyle, check the admin panel to confirm the order</Say>
+      <Pause length="2"/>
+      <Say>Thank You</Say>
+    </Response>
+  `;
+
+  const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Basic " + btoa(`${accountSid}:${authToken}`),
+      },
+      body: new URLSearchParams({
+        From: twilioPhoneNumber,
+        To: recipientPhoneNumber,
+        Twiml: twiml,
+      }),
+    });
+
+    if (response.ok) {
+      console.log("Call placed successfully");
+      } 
+      else {
+      console.error("Failed to place the call");
+    }
+  } catch (error) {
+    console.error("Error placing the call:", error);
+  }
+};
+
+    makeCall();
+
+    const whatsappUrl = `https://wa.me/+918089718880?text=${encodedMessage}`;
 
     // Open WhatsApp link in a new tab
     window.open(whatsappUrl, '_blank');

@@ -110,7 +110,7 @@ const InfiniteScrollProductsPage = () => {
 
   return (
     <div className="flex-grow container mx-auto px-4 py-8 mt-12" ref={pageRef}>
-      <h1 className="text-3xl font-bold mb-6 text-center">All Products</h1>
+      <h1 className="text-2xl lg:text-3xl font-bold mb-6 text-center">All Products</h1>
 
       {/* Category Filter */}
       <div className="mb-8 flex flex-wrap gap-2 justify-center">

@@ -38,7 +38,7 @@ const Navbar = () => {
             {/* Search Icon */}
             <div className="w-1/4">
               <button onClick={() => setIsSearchOpen(true)} className="hover:text-gray-600">
-                <FaSearch size={24} />
+                <FaSearch size={18} />
               </button>
             </div>
 
@@ -50,7 +50,7 @@ const Navbar = () => {
             {/* Cart icon */}
             <div>
               <Link href="/cart" className="hover:text-gray-600">
-                <FaShoppingCart size={24} />
+                <FaShoppingCart size={18} />
               </Link>
             </div>
           </div>
@@ -71,15 +71,15 @@ const Navbar = () => {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black shadow-md z-50">
           <div className="flex justify-around py-2">
             <Link href="/" className="flex flex-col items-center text-black hover:text-gray-600">
-              <FaHome size={24} />
+              <FaHome size={18} />
               <span>Home</span>
             </Link>
             <Link href="/products" className="flex flex-col items-center text-black hover:text-gray-600">
-              <FaShoppingBag size={24} />
+              <FaShoppingBag size={18} />
               <span>Products</span>
             </Link>
             <Link href="/wishlist" className="flex flex-col items-center text-black hover:text-gray-600">
-              <FaHeart size={24} />
+              <FaHeart size={18} />
               <span>Wishlist</span>
             </Link>
           </div>

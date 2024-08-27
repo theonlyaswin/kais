@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart } from 'react-icons/ai';
 import { ref, get, set } from 'firebase/database';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db as firestore, database } from '../firebase';
 import Link from 'next/link';
 
@@ -90,7 +90,7 @@ const handleWishlistToggle = async (e) => {
     <Card className="w-full h-96 relative overflow-hidden group hover:cursor-pointer">
       {/* Like Button (Visible on Hover) */}
       <button
-        className={`absolute top-2 left-2 z-10 p-2 bg-white rounded-full transition-opacity duration-300 ${isInWishlist ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100`}
+        className={`absolute top-2 left-2 z-10 p-2 bg-white rounded-full transition-opacity duration-300 ${isInWishlist ? 'opacity-100' : 'opacity-0'}  opacity-100`}
         onClick={handleWishlistToggle}
       >
         {isInWishlist ? (
@@ -122,16 +122,18 @@ const handleWishlistToggle = async (e) => {
       </div>
 
       {/* Hover Effect for Add to Cart */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black text-white p-4 transform translate-y-0 group-hover:translate-y-0 transition-transform duration-300 lg:translate-y-full">
+      <div className="absolute bottom-0 left-0 right-0 bg-white text-black p-4 transform translate-y-0 group-hover:translate-y-0 transition-transform duration-300 lg:translate-y-full">
         <h3 className="text-lg font-semibold">{name}</h3>
         <p className="text-sm">₹{price}</p>
-        <button
-          className="mt-2 bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center space-x-2"
+        <div className='flex justify-center items-center'>
+          <button
+          className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center "
           onClick={handleAddToCart}
         >
           <span>Add to Cart</span>
-          <AiOutlineShoppingCart className="w-5 h-5" />
         </button>
+        </div>
+        
       </div>
 
       {showPopup && (

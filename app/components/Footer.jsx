@@ -58,14 +58,6 @@ Pullatt Arcade, Malappuram</p>
               ))}
             </div>
           </div>
-
-          <div className="flex justify-center text-3xl">
-            <SiPhonepe className="mx-2" />
-            <SiGooglepay className="mx-2" />
-            <SiPaytm className="mx-2" />
-            <SiVisa className="mx-2" />
-            <SiMastercard className="mx-2" />
-          </div>
           <div className="flex justify-center mt-3">
             © 2024 Azora Ads. All rights reserved.
           </div>

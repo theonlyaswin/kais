@@ -6,6 +6,7 @@ import CircleImageLabel from './components/CircleImageLabel';
 import Autoplay from "embla-carousel-autoplay";
 import ProductCard from './components/ProductCard';
 import SideSection from './components/SideSection'; 
+import ReviewCard from "./components/ReviewCard";
 
 import {
   Carousel,
@@ -25,14 +26,23 @@ const category_images = [
   '/collection4.png',
 ];
 
-const review_images = [
-  "/review1.png",
-  "/review2.png",
-  "/review3.png",
-  "/review4.png",
-  "/review5.png",
-  "/review6.png",
+const reviews = [
+  { image: "/review1.png", name: "John Doe", rating: 5, date: "21/03/24", review: "Very satisfied with my purchase." },
+  { image: "/review2.png", name: "Jane Smith", rating: 4, date: "20/03/24", review: "Very satisfied with my purchase." },
+  { image: "/review3.png", name: "Mike Johnson", rating: 5, date: "19/03/24", review: "Very satisfied with my purchase." },
+  { image: "/review4.png", name: "Emily Brown", rating: 4, date: "18/03/24", review: "Very satisfied with my purchase." },
+  { image: "/review5.png", name: "Alex Lee", rating: 5, date: "17/03/24", review: "Very satisfied with my purchase." },
+  { image: "/review6.png", name: "Sarah Wilson", rating: 4, date: "16/03/24", review: "Very satisfied with my purchase." },
 ];
+
+
+const truncateReview = (text, wordCount = 10) => {
+  const words = text.split(' ');
+  if (words.length > wordCount) {
+    return words.slice(0, wordCount).join(' ') + '...more';
+  }
+  return text;
+};
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -89,7 +99,7 @@ useEffect(() => {
   <img src="/banner1.png" alt="banner" className="banner-image" />
 </div>
 
-      <div className="px-4 md:px-8 flex justify-start md:justify-center overflow-x-auto whitespace-nowrap gap-4 md:gap-8 relative m-8 scrollbar-hide">
+      <div className=" flex justify-start md:justify-center overflow-x-auto whitespace-nowrap gap-3 md:gap-3 relative m-8 scrollbar-hide" >
         {category_images.slice(0, 4).map((src, index) => (
           <CircleImageLabel 
             key={index}
@@ -160,7 +170,25 @@ useEffect(() => {
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Customer Feedback</h2>
         <div className="w-full md:w-2/3 mx-auto">
-          {renderCarousel(review_images, feedbackCarouselPlugin)}
+          <Carousel className="w-full" plugins={[feedbackCarouselPlugin.current]}>
+            <CarouselContent className="-ml-1">
+              {reviews.map((review, index) => (
+                <CarouselItem key={index} className="pl-1 basis-full sm:basis-1/2 lg:basis-1/3">
+                  <div className="p-1">
+                    <ReviewCard
+                      image={review.image}
+                      name={review.name}
+                      rating={review.rating}
+                      date={review.date}
+                      review={truncateReview(review.review)}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex" />
+            <CarouselNext className="hidden sm:flex" />
+          </Carousel>
         </div>
       </div>
 
@@ -173,7 +201,7 @@ useEffect(() => {
         />
         <SideSection
           title="Strength"
-          description="Our strengths lie in our unwavering commitment to quality, innovation, and customer satisfaction, making us a trusted leader in the home solutions industry. We pride ourselves on offering an extensive range of products and services that cater to diverse tastes, needs, and budgets, ensuring that every customer finds exactly what they’re looking for."
+          description="Our strengths lie in our unwavering commitment to quality, innovation, and customer satisfaction, making us a trusted leader in the home solutions industry. We pride ourselves on offering an extensive range of products and services that cater to diverse tastes, needs, and budgets, ensuring that every customer finds exactly what they're looking for."
           imageSrc="/strength.png"
           reverse={true}
         />

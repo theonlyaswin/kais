@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./globals.css";
 import CircleImageLabel from './components/CircleImageLabel';
 import Autoplay from "embla-carousel-autoplay";
 import ProductCard from './components/ProductCard';
-import SideSection from './components/SideSection'; 
 import ReviewCard from "./components/ReviewCard";
 
 import {
@@ -17,24 +16,7 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { db } from './firebase'; 
-import { collection, getDocs, query, limit  } from 'firebase/firestore';
-
-const category_images = [
-  '/collection1.png',
-  '/collection2.png',
-  '/collection3.png',
-  '/collection4.png',
-];
-
-const reviews = [
-  { image: "/review1.png", name: "John Doe", rating: 5, date: "21/03/24", review: "Very satisfied with my purchase." },
-  { image: "/review2.png", name: "Jane Smith", rating: 4, date: "20/03/24", review: "Very satisfied with my purchase." },
-  { image: "/review3.png", name: "Mike Johnson", rating: 5, date: "19/03/24", review: "Very satisfied with my purchase." },
-  { image: "/review4.png", name: "Emily Brown", rating: 4, date: "18/03/24", review: "Very satisfied with my purchase." },
-  { image: "/review5.png", name: "Alex Lee", rating: 5, date: "17/03/24", review: "Very satisfied with my purchase." },
-  { image: "/review6.png", name: "Sarah Wilson", rating: 4, date: "16/03/24", review: "Very satisfied with my purchase." },
-];
-
+import { collection, getDocs, query, limit, doc, getDoc } from 'firebase/firestore';
 
 const truncateReview = (text, wordCount = 10) => {
   const words = text.split(' ');
@@ -46,31 +28,73 @@ const truncateReview = (text, wordCount = 10) => {
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const productCarouselPlugin = React.useRef(
+  const [categories, setCategories] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [bannerImages, setBannerImages] = useState([]);
+  const [videoUrl, setVideoUrl] = useState('');
+  
+  const productCarouselPlugin = useRef(
     Autoplay({ delay: 1500, stopOnInteraction: false })
   );
 
-  const feedbackCarouselPlugin = React.useRef(
+  const feedbackCarouselPlugin = useRef(
     Autoplay({ delay: 1500, stopOnInteraction: false })
   );
 
-useEffect(() => {
-    const fetchProducts = async () => {
+  const bannerCarouselPlugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
+        // Fetch products
         const productsRef = collection(db, 'site/tls/products');
         const productsQuery = query(productsRef, limit(8));
-        const querySnapshot = await getDocs(productsQuery);
-        const productData = querySnapshot.docs.map((doc) => ({
+        const productsSnapshot = await getDocs(productsQuery);
+        const productData = productsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         setProducts(productData);
+
+        // Fetch categories
+        const categoriesRef = collection(db, 'site/tls/categories');
+        const categoriesSnapshot = await getDocs(categoriesRef);
+        const categoryData = categoriesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCategories(categoryData);
+
+        // Fetch reviews
+        const reviewsRef = collection(db, 'site/tls/reviews');
+        const reviewsSnapshot = await getDocs(reviewsRef);
+        const reviewData = reviewsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setReviews(reviewData);
+
+        // Fetch banner images
+        const bannerRef = collection(db, 'site/tls/headerslides');
+        const bannerSnapshot = await getDocs(bannerRef);
+        const bannerData = bannerSnapshot.docs.map(doc => doc.data().image);
+        setBannerImages(bannerData);
+
+        // Fetch video URL
+        const videoDocRef = doc(db, 'site/tls');
+        const videoDocSnap = await getDoc(videoDocRef);
+        if (videoDocSnap.exists()) {
+          setVideoUrl(videoDocSnap.data().video);
+          console.log(videoDocSnap.data().video);
+        }
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   const renderCarousel = (images, plugin) => (
@@ -95,52 +119,70 @@ useEffect(() => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="sec-height banner-1 w-full bg-black text-white mb-8 overflow-hidden">
-  <img src="https://images.pexels.com/photos/135620/pexels-photo-135620.jpeg" alt="banner" className="w-full h-full object-cover" />
-</div>
+      <div className="sec-height banner-1 w-full mb-8 overflow-hidden">
+        <Carousel className="w-full h-full" plugins={[bannerCarouselPlugin.current]}>
+          <CarouselContent>
+            {bannerImages.map((src, index) => (
+              <CarouselItem key={index}>
+                <div className="w-full h-full">
+                  <img src={src} alt={`Banner ${index + 1}`} className="w-full h-full object-cover" />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden sm:flex" />
+          <CarouselNext className="hidden sm:flex" />
+        </Carousel>
+      </div>
 
-
-      <div className=" flex justify-start md:justify-center overflow-x-auto whitespace-nowrap gap-3 md:gap-3 relative m-8 scrollbar-hide" >
-        {category_images.slice(0, 4).map((src, index) => (
+      <div className="flex justify-start md:justify-center overflow-x-auto whitespace-nowrap gap-3 md:gap-3 relative m-8 scrollbar-hide">
+        {categories.slice(0, 4).map((category) => (
           <CircleImageLabel 
-            key={index}
-            src={src} 
-            alt={`Category ${index + 1}`} 
-            label={`CATEGORY ${index + 1}`} 
+            key={category.id}
+            src={category.image} 
+            alt={`Category ${category.caption}`} 
+            label={category.caption} 
           />
         ))}
       </div>
 
       <div className="mb-8">
-        <video className="w-full" autoPlay  loop muted controls preload="none">
-          <source src="/shop.mp4" type="video/mp4" />
-          <track src="/path/to/captions.vtt" kind="subtitles" srcLang="en" label="English" />
-          Your browser does not support the video tag.
-        </video>
-      </div>
+  <video 
+    className="w-full" 
+    controls 
+    preload="metadata"
+    playsInline
+    onError={(e) => console.error("Video error:", e)}
+  >
+    <source src={videoUrl} type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+</div>
 
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Browse Our Collection</h2>
         <div className="w-full md:w-2/3 mx-auto">
-          {renderCarousel(category_images, productCarouselPlugin)}
+          {renderCarousel(categories.map(category => category.image), productCarouselPlugin)}
         </div>
       </div>
 
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Latest Products</h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.slice(0, 8).map((product, index) => (
-            <ProductCard key={product.id}
-          id={product.id}
-          image={product.images && product.images.length > 0 ? product.images[0] : ''}
-          name={product.title || ''}
-          price={product.varients && product.varients.length > 0 ? (product.varients[0].offerprice || product.varients[0].price) : ''}
-          originalPrice={product.varients && product.varients.length > 0 ? product.varients[0].price : ''}
-          discountPercentage={
-            product.varients && product.varients.length > 0 && product.varients[0].offerprice
-              ? Math.round(((product.varients[0].price - product.varients[0].offerprice) / product.varients[0].price) * 100)
-              : 0
-          }/>
+          {products.slice(0, 8).map((product) => (
+            <ProductCard 
+              key={product.id}
+              id={product.id}
+              image={product.images && product.images.length > 0 ? product.images[0] : ''}
+              name={product.title || ''}
+              price={product.varients && product.varients.length > 0 ? (product.varients[0].offerprice || product.varients[0].price) : ''}
+              originalPrice={product.varients && product.varients.length > 0 ? product.varients[0].price : ''}
+              discountPercentage={
+                product.varients && product.varients.length > 0 && product.varients[0].offerprice
+                  ? Math.round(((product.varients[0].price - product.varients[0].offerprice) / product.varients[0].price) * 100)
+                  : 0
+              }
+            />
           ))}
         </div>
       </div>
@@ -148,26 +190,39 @@ useEffect(() => {
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">All Products</h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.slice(0, 8).map((product, index) => (
-            <ProductCard key={product.id}
-          id={product.id}
-          image={product.images && product.images.length > 0 ? product.images[0] : ''}
-          name={product.title || ''}
-          price={product.varients && product.varients.length > 0 ? (product.varients[0].offerprice || product.varients[0].price) : ''}
-          originalPrice={product.varients && product.varients.length > 0 ? product.varients[0].price : ''}
-          discountPercentage={
-            product.varients && product.varients.length > 0 && product.varients[0].offerprice
-              ? Math.round(((product.varients[0].price - product.varients[0].offerprice) / product.varients[0].price) * 100)
-              : 0
-          }/>
+          {products.slice(0, 8).map((product) => (
+            <ProductCard 
+              key={product.id}
+              id={product.id}
+              image={product.images && product.images.length > 0 ? product.images[0] : ''}
+              name={product.title || ''}
+              price={product.varients && product.varients.length > 0 ? (product.varients[0].offerprice || product.varients[0].price) : ''}
+              originalPrice={product.varients && product.varients.length > 0 ? product.varients[0].price : ''}
+              discountPercentage={
+                product.varients && product.varients.length > 0 && product.varients[0].offerprice
+                  ? Math.round(((product.varients[0].price - product.varients[0].offerprice) / product.varients[0].price) * 100)
+                  : 0
+              }
+            />
           ))}
         </div>
       </div>
 
-      <div className="sec-height banner-1 w-full bg-black text-white mb-8 overflow-hidden">
-  <img src="https://images.pexels.com/photos/135620/pexels-photo-135620.jpeg" alt="banner" className="w-full h-full object-cover" />
-</div>
-
+      <div className="sec-height banner-1 w-full mb-8 overflow-hidden">
+        <Carousel className="w-full h-full" plugins={[bannerCarouselPlugin.current]}>
+          <CarouselContent>
+            {bannerImages.map((src, index) => (
+              <CarouselItem key={index}>
+                <div className="w-full h-full">
+                  <img src={src} alt={`Banner ${index + 1}`} className="w-full h-full object-cover" />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden sm:flex" />
+          <CarouselNext className="hidden sm:flex" />
+        </Carousel>
+      </div>
 
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Customer Feedback</h2>
@@ -191,39 +246,6 @@ useEffect(() => {
             <CarouselPrevious className="hidden sm:flex" />
             <CarouselNext className="hidden sm:flex" />
           </Carousel>
-        </div>
-      </div>
-
-      <div className="space-y-12 flex flex-col">
-        <SideSection
-          title="Vision"
-          description="Our vision is to be the ultimate one-stop solution for all your home needs, providing a seamless and comprehensive experience that caters to every aspect of your living space. From the moment you step into your new home, to the day-to-day essentials that keep it running smoothly, we are committed to offering a wide range of products and services that meet the highest standards of quality and convenience."
-          imageSrc="/vision.png"
-          reverse={false}
-        />
-        <SideSection
-          title="Strength"
-          description="Our strengths lie in our unwavering commitment to quality, innovation, and customer satisfaction, making us a trusted leader in the home solutions industry. We pride ourselves on offering an extensive range of products and services that cater to diverse tastes, needs, and budgets, ensuring that every customer finds exactly what they're looking for."
-          imageSrc="/strength.png"
-          reverse={true}
-        />
-      </div>
-      <div className="my-20">
-        <h2 className="text-2xl font-bold mb-6 text-center">Best Sellers</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.slice(0, 8).map((product, index) => (
-            <ProductCard key={product.id}
-          id={product.id}
-          image={product.images && product.images.length > 0 ? product.images[0] : ''}
-          name={product.title || ''}
-          price={product.varients && product.varients.length > 0 ? (product.varients[0].offerprice || product.varients[0].price) : ''}
-          originalPrice={product.varients && product.varients.length > 0 ? product.varients[0].price : ''}
-          discountPercentage={
-            product.varients && product.varients.length > 0 && product.varients[0].offerprice
-              ? Math.round(((product.varients[0].price - product.varients[0].offerprice) / product.varients[0].price) * 100)
-              : 0
-          }/>
-          ))}
         </div>
       </div>
     </div>

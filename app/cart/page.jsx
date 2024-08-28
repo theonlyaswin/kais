@@ -110,61 +110,61 @@ const CartPage = () => {
 
   return (
     <div className='flex justify-center items-center'>
-    <div className="p-6 min-h-screen mt-12 w-2/3">
-      <h2 className="text-3xl text-center font-bold mb-6 text-gray-800">Your Cart</h2>
-      <div className="space-y-4">
-        {cartData.length > 0 ? (
-          <>
-            {cartData.map((item, index) => (
-              <Card key={index} className="flex justify-between items-center p-4 bg-white shadow-md rounded-lg">
-                <div className="flex items-center">
-                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover mr-4 rounded-lg" />
-                  <div>
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">₹{item.price} each</p>
-                    <div className="flex items-center mt-2">
-                      <button
-                        className="p-1 bg-gray-200 rounded-full"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      >
-                        <AiOutlineMinus />
-                      </button>
-                      <span className="mx-2 text-lg">{item.quantity}</span>
-                      <button
-                        className="p-1 bg-gray-200 rounded-full"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      >
-                        <AiOutlinePlus />
-                      </button>
+      <div className="p-6 min-h-screen mt-12 w-full max-w-screen-lg">
+        <h2 className="text-3xl text-center font-bold mb-6 text-gray-800">Your Cart</h2>
+        <div className="space-y-4">
+          {cartData.length > 0 ? (
+            <>
+              {cartData.map((item, index) => (
+                <Card key={index} className="flex flex-col md:flex-row justify-between items-center p-4 bg-white shadow-md rounded-lg">
+                  <div className="flex items-center w-full md:w-auto mb-4 md:mb-0">
+                    <img src={item.image} alt={item.name} className="w-20 h-20 object-cover mr-4 rounded-lg" />
+                    <div>
+                      <h3 className="text-lg font-semibold">{item.name}</h3>
+                      <p className="text-gray-600">₹{item.price} each</p>
+                      <div className="flex items-center mt-2">
+                        <button
+                          className="p-1 bg-gray-200 rounded-full"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        >
+                          <AiOutlineMinus />
+                        </button>
+                        <span className="mx-2 text-lg">{item.quantity}</span>
+                        <button
+                          className="p-1 bg-gray-200 rounded-full"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        >
+                          <AiOutlinePlus />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="text-lg font-bold">₹{item.price * item.quantity}</div>
-                  <button
-                    className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition duration-200"
-                    onClick={() => removeItem(item.id)}
-                  >
-                    <AiOutlineDelete className="w-5 h-5" />
-                  </button>
-                </div>
-              </Card>
-            ))}
-            <div className="flex justify-between items-center p-4 bg-white shadow-md rounded-lg mt-4">
-              <h3 className="text-xl font-semibold">Total</h3>
-              <div className="text-2xl font-bold">₹{totalPrice}</div>
-            </div>
-            <Link href='/checkout'>
-              <button className="w-full bg-blue-600 text-white py-3 mt-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-200">
-              Proceed to Checkout
-              </button>
-            </Link>
-          </>
-        ) : (
-          <p>Your cart is empty.</p>
-        )}
+                  <div className="flex items-center justify-between w-full md:w-auto space-x-4">
+                    <div className="text-lg font-bold">₹{item.price * item.quantity}</div>
+                    <button
+                      className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition duration-200"
+                      onClick={() => removeItem(item.id)}
+                    >
+                      <AiOutlineDelete className="w-5 h-5" />
+                    </button>
+                  </div>
+                </Card>
+              ))}
+              <div className="flex justify-between items-center p-4 bg-white shadow-md rounded-lg mt-4">
+                <h3 className="text-xl font-semibold">Total</h3>
+                <div className="text-2xl font-bold">₹{totalPrice}</div>
+              </div>
+              <Link href='/checkout'>
+                <button className="w-full bg-blue-600 text-white py-3 mt-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-200">
+                Proceed to Checkout
+                </button>
+              </Link>
+            </>
+          ) : (
+            <p className="text-center text-gray-600">Your cart is empty.</p>
+          )}
+        </div>
       </div>
-    </div>
     </div>
   );
 };

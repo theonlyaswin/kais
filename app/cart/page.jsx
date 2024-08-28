@@ -63,7 +63,8 @@ const CartPage = () => {
             ...item,
             image: productDoc.data().images[0], // Assuming the first image is the main image
             name: productDoc.data().name,
-            price: productDoc.data().price,
+            // Use the price from the cart instead of Firestore
+            price: item.price,
           };
         } else {
           console.log(`No product found for ID: ${item.id}`);

@@ -67,7 +67,8 @@ const BillingForm = () => {
           return {
             ...item,
             title: productDoc.data().title,
-            price: productDoc.data().price,
+            // Use the price from the cart instead of Firestore
+            price: item.price,
             images: productDoc.data().images,
           };
         } else {
@@ -114,26 +115,26 @@ const BillingForm = () => {
     }));
   };
 
-const handlePlaceOrder = async (e) => {
-  e.preventDefault();
-  if (!isFormValid) return;
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+    if (!isFormValid) return;
 
-  try {
-    const orderRef = ref(database, 'Orders');
-    const newOrderRef = push(orderRef);
-    const orderId = newOrderRef.key;
-    
-    const orderData = {
-      address1: formData.street,
-      address2: formData.city,
-      address3: formData.district,
-      email: formData.email,
-      name: formData.name,
-      orderId: orderId,
-      phone: formData.phone,
-      status: "403",
-      userId: uniqueDeviceId,
-      data: await Promise.all(cartData.map(async (item) => ({
+    try {
+      const orderRef = ref(database, 'Orders');
+      const newOrderRef = push(orderRef);
+      const orderId = newOrderRef.key;
+      
+      const orderData = {
+        address1: formData.street,
+        address2: formData.city,
+        address3: formData.district,
+        email: formData.email,
+        name: formData.name,
+        orderId: orderId,
+        phone: formData.phone,
+        status: "403",
+        userId: uniqueDeviceId,
+        data: cartData.map(item => ({
           imageUrl: item.images && item.images.length > 0 ? item.images[0] : '',
           label: item.title,
           price: item.price,
@@ -141,81 +142,78 @@ const handlePlaceOrder = async (e) => {
           productTitle: item.title,
           productId: item.id,
           quantity: item.quantity
-        })))
+        }))
       };
 
-    await set(ref(database, `Orders/${orderId}`), orderData);
+      await set(ref(database, `Orders/${orderId}`), orderData);
 
-    // Clear the cart
-    const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
-    await set(cartRef, null);
+      // Clear the cart
+      const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
+      await set(cartRef, null);
 
-    // Format the order details for WhatsApp message
-    const message = `Hi, an order for Kai's Lifestyle Studios\n` +
-                    `Order ID: ${orderId}\n` + `and I would ike to continue the payment to deliver my order.`
+      // Format the order details for WhatsApp message
+      const message = `Hi, an order for Kai's Lifestyle Studios\n` +
+                      `Order ID: ${orderId}\n` + `and I would like to continue the payment to deliver my order.`
 
-    // Encode the message to be URL-safe
-    const encodedMessage = encodeURIComponent(message);
+      // Encode the message to be URL-safe
+      const encodedMessage = encodeURIComponent(message);
 
-    
-    const makeCall = async () => {
-  const accountSid = 'ACfc874a169c3846935b075dc5f217ba34';
-  const authToken = 'c330a10ea93c1eaf4255e03176940120';
-  const twilioPhoneNumber = '+16366424846';
-  const recipientPhoneNumber = '+918089718880';
+      const makeCall = async () => {
+        const accountSid = 'ACfc874a169c3846935b075dc5f217ba34';
+        const authToken = 'c330a10ea93c1eaf4255e03176940120';
+        const twilioPhoneNumber = '+16366424846';
+        const recipientPhoneNumber = '+918089718880';
 
-  const twiml = `
-    <Response>
-      <Say>Hello! You Have Received an Order From Kays Lifestyle , Please Check on Admin Panel to Confirm Order.</Say>
-      <Pause length="1"/>
-      <Say> I Repeat</Say>
-      <Pause length="1"/>
-      <Say>You have received an order from kays lifestyle, check the admin panel to confirm the order</Say>
-      <Pause length="2"/>
-      <Say>Thank You</Say>
-    </Response>
-  `;
+        const twiml = `
+          <Response>
+            <Say>Hello! You Have Received an Order From Kays Lifestyle , Please Check on Admin Panel to Confirm Order.</Say>
+            <Pause length="1"/>
+            <Say> I Repeat</Say>
+            <Pause length="1"/>
+            <Say>You have received an order from kays lifestyle, check the admin panel to confirm the order</Say>
+            <Pause length="2"/>
+            <Say>Thank You</Say>
+          </Response>
+        `;
 
-  const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`;
+        const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`;
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Basic " + btoa(`${accountSid}:${authToken}`),
-      },
-      body: new URLSearchParams({
-        From: twilioPhoneNumber,
-        To: recipientPhoneNumber,
-        Twiml: twiml,
-      }),
-    });
+        try {
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Authorization: "Basic " + btoa(`${accountSid}:${authToken}`),
+            },
+            body: new URLSearchParams({
+              From: twilioPhoneNumber,
+              To: recipientPhoneNumber,
+              Twiml: twiml,
+            }),
+          });
 
-    if (response.ok) {
-      console.log("Call placed successfully");
-      } 
-      else {
-      console.error("Failed to place the call");
+          if (response.ok) {
+            console.log("Call placed successfully");
+          } else {
+            console.error("Failed to place the call");
+          }
+        } catch (error) {
+          console.error("Error placing the call:", error);
+        }
+      };
+
+      makeCall();
+
+      const whatsappUrl = `https://wa.me/+918089718880?text=${encodedMessage}`;
+
+      // Open WhatsApp link in a new tab
+      window.open(whatsappUrl, '_blank');
+      router.push('/products');
+      
+    } catch (error) {
+      console.error("Error placing order:", error);
     }
-  } catch (error) {
-    console.error("Error placing the call:", error);
-  }
-};
-
-    makeCall();
-
-    const whatsappUrl = `https://wa.me/+918089718880?text=${encodedMessage}`;
-
-    // Open WhatsApp link in a new tab
-    window.open(whatsappUrl, '_blank');
-    router.push('/products');
-    
-  } catch (error) {
-    console.error("Error placing order:", error);
-  }
-};
-
+  };
 
   return (
     <div className='flex justify-center items-center w-full px-4 sm:px-6 lg:px-8'>
@@ -223,7 +221,7 @@ const handlePlaceOrder = async (e) => {
         <div className="w-full lg:w-2/3">
           <h2 className="text-xl font-bold mb-4 pb-2 border-b">Billing details</h2>
           <form className="space-y-4" onSubmit={handlePlaceOrder}>
-            <div>
+           <div>
               <label htmlFor="name" className="block mb-1">
                 Name <span className="text-red-500">*</span>
               </label>

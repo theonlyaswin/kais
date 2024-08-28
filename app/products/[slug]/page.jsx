@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../../components/ProductCard';
-import { FaTruck, FaMoneyBillWave, FaRedoAlt } from 'react-icons/fa';
+import { FaTruck, FaMoneyBillWave, FaRedoAlt, FaMinus, FaPlus } from 'react-icons/fa';
 import { doc, getDoc, collection, query, where, getDocs,} from 'firebase/firestore';
 import { db as firestore, database } from '../../firebase';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,11 @@ const ProductPage = ({ params }) => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [mainImage, setMainImage] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [oldPrice, setCurrentPrice] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [offerPrice, setOfferPrice] = useState(null);
 
   // Utility functions for generating and retrieving device ID
   function getOrCreateDeviceId() {
@@ -49,23 +54,55 @@ const ProductPage = ({ params }) => {
 
         if (productSnap.exists()) {
           const productData = productSnap.data();
-        productData.id = params.slug;  // Assigning the slug as the product ID
-        const images = [];
-          if (productData.colorVarients) {
-            for (const colorVariant of productData.colorVarients) {
-              if (colorVariant.source) {
-                for (const source of colorVariant.source) {
-                  if (source.url) {
-                    images.push(source.url);
-                  }
-                }
-              }
+          productData.id = params.slug;  // Assigning the slug as the product ID
+          
+          // Process color variants
+          const colorVariants = productData.colorVarients || [];
+          const images = [];
+          const colors = [];
+          
+          colorVariants.forEach(variant => {
+            if (variant.label) {
+              colors.push(variant.label);
             }
-          }
+            if (variant.source && variant.source.length > 0) {
+              const variantImages = variant.source.filter(src => src.url).map(src => src.url);
+              images.push(...variantImages);
+            }
+          });
 
           productData.images = images;
-          setProduct(productData);
+          productData.colors = colors;
+
+          // Set initial color and image
+          if (colors.length > 0) {
+            setSelectedColor(colors[0]);
+          }
           setMainImage(images[0]);
+
+          // Process size variants
+          const sizeVariants = productData.varients || [];
+          const sizes = sizeVariants.map(variant => variant.label);
+          productData.sizes = sizes;
+
+          // Set initial size and price
+          if (sizes.length > 0) {
+            setSelectedSize(sizes[0]);
+            setCurrentPrice(sizeVariants[0].price);
+          } else {
+            setCurrentPrice(productData.price);
+          }
+
+          if (sizes.length > 0) {
+            setSelectedSize(sizes[0]);
+            setCurrentPrice(sizeVariants[0].price);
+            setOfferPrice(sizeVariants[0].offerprice);
+          } else {
+            setCurrentPrice(productData.price);
+            setOfferPrice(productData.offerprice);
+          }
+
+          setProduct(productData);
         } else {
           console.error('No such document!');
         }
@@ -77,8 +114,7 @@ const ProductPage = ({ params }) => {
     fetchProductData();
   }, [params.slug]);
 
-  // Fetch related products
-  useEffect(() => {
+   useEffect(() => {
     const fetchRelatedProducts = async () => {
       if (!params.slug) return;
 
@@ -105,68 +141,87 @@ const ProductPage = ({ params }) => {
     }
   }, [params.slug, product]);
 
+
+
+
+
+
   const handleAddToBag = async () => {
-  if (!uniqueDeviceId || !product) return;
+    if (!uniqueDeviceId || !product) return;
 
-  // Ensure product.id is defined
-  if (!product.id) {
-    console.error("Product ID is undefined. Cannot add to cart.");
-    return;
-  }
+    if (!product.id) {
+      console.error("Product ID is undefined. Cannot add to cart.");
+      return;
+    }
 
-  const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
-  const snapshot = await get(cartRef);
+    const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
+    const snapshot = await get(cartRef);
 
-  let cartItems = snapshot.exists() ? snapshot.val() : [];
+    let cartItems = snapshot.exists() ? snapshot.val() : [];
 
-  const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+    const existingItemIndex = cartItems.findIndex(item => 
+      item.id === product.id && item.size === selectedSize && item.color === selectedColor
+    );
 
-  if (existingItemIndex > -1) {
-    cartItems[existingItemIndex].quantity += 1;
-  } else {
-    cartItems.push({ id: product.id, quantity: 1, price: product.price });
-  }
+    if (existingItemIndex > -1) {
+      cartItems[existingItemIndex].quantity += quantity;
+    } else {
+      cartItems.push({ 
+        id: product.id, 
+        quantity: quantity, 
+        price: offerPrice,
+        size: selectedSize,
+        color: selectedColor
+      });
+    }
 
-  try {
-    await set(cartRef, cartItems);
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 3000);
-  } catch (error) {
-    console.error("Error adding item to cart:", error);
-  }
-};
+    try {
+      await set(cartRef, cartItems);
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000);
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+    }
+  };
 
   const handleBuynow = async () => {
-  if (!uniqueDeviceId || !product) return;
+    if (!uniqueDeviceId || !product) return;
 
-  // Ensure product.id is defined
-  if (!product.id) {
-    console.error("Product ID is undefined. Cannot add to cart.");
-    return;
-  }
+    if (!product.id) {
+      console.error("Product ID is undefined. Cannot add to cart.");
+      return;
+    }
 
-  const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
-  const snapshot = await get(cartRef);
+    const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
+    const snapshot = await get(cartRef);
 
-  let cartItems = snapshot.exists() ? snapshot.val() : [];
+    let cartItems = snapshot.exists() ? snapshot.val() : [];
 
-  const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+    const existingItemIndex = cartItems.findIndex(item => 
+      item.id === product.id && item.size === selectedSize && item.color === selectedColor
+    );
 
-  if (existingItemIndex > -1) {
-    cartItems[existingItemIndex].quantity += 1;
-  } else {
-    cartItems.push({ id: product.id, quantity: 1, price: product.price });
-  }
+    if (existingItemIndex > -1) {
+      cartItems[existingItemIndex].quantity += quantity;
+    } else {
+      cartItems.push({ 
+        id: product.id, 
+        quantity: quantity, 
+        price: offerPrice,
+        size: selectedSize,
+        color: selectedColor
+      });
+    }
 
-  try {
-    await set(cartRef, cartItems);
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 3000);
-    router.push('/checkout');
-  } catch (error) {
-    console.error("Error :", error);
-  }
-};
+    try {
+      await set(cartRef, cartItems);
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000);
+      router.push('/checkout');
+    } catch (error) {
+      console.error("Error :", error);
+    }
+  };
 
 
   const handleThumbnailClick = (clickedImage) => {
@@ -183,6 +238,27 @@ const ProductPage = ({ params }) => {
   };
 
 
+  const handleColorChange = (color) => {
+    setSelectedColor(color);
+    const colorVariant = product.colorVarients.find(v => v.label === color);
+    if (colorVariant && colorVariant.source && colorVariant.source.length > 0) {
+      setMainImage(colorVariant.source[0].url);
+    }
+  };
+
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+    const sizeVariant = product.varients.find(v => v.label === size);
+    if (sizeVariant) {
+      setCurrentPrice(sizeVariant.price);
+      setOfferPrice(sizeVariant.offerprice);
+    }
+  };
+
+  const handleQuantityChange = (newQuantity) => {
+    const qty = Math.max(1, Math.min(100, newQuantity));
+    setQuantity(qty);
+  };
 
   if (!product) return <p>Loading...</p>;
 
@@ -198,7 +274,7 @@ const ProductPage = ({ params }) => {
                 src={image}
                 alt={`Thumbnail ${index + 1}`}
                 className="w-16 h-16 md:w-20 md:h-20 rounded object-cover cursor-pointer"
-                onClick={() => handleThumbnailClick(image)} // Handle thumbnail click
+                onClick={() => setMainImage(image)}
               />
             ))}
           </div>
@@ -207,7 +283,7 @@ const ProductPage = ({ params }) => {
         {/* Center: Main Image */}
         <div className="order-1 md:order-2">
           <img 
-            src={mainImage} // Display the selected main image
+            src={mainImage}
             alt="Main Product Image"
             className="w-full md:w-[600px] h-auto rounded-lg"
           />
@@ -215,25 +291,58 @@ const ProductPage = ({ params }) => {
 
         {/* Right Side: Product Details */}
         <div className="w-full md:w-1/2 mt-4 md:mt-0 order-3">
-          <h1 className="text-xl md:text-2xl font-semibold">{product.title}</h1>
-          <p className="text-gray-500 mt-2">Inclusive of all Taxes</p>
-          <div className="flex items-center space-x-2 mt-4">
-            <span className="text-2xl md:text-3xl font-bold text-red-600">₹{product.price}</span>
-            <span className="line-through text-gray-500">₹{product.originalPrice}</span>
-            <span className="text-green-600">{product.discountPercentage}% OFF</span>
-          </div>
+        <h1 className="text-xl md:text-2xl font-semibold">{product.title}</h1>
+        <p className="text-gray-500 mt-2">Inclusive of all Taxes</p>
+        <div className="flex items-center space-x-2 mt-4">
+          <span className="text-2xl md:text-3xl font-bold text-red-600">₹{offerPrice}</span>
+          <span className="line-through text-gray-500">₹{oldPrice}</span>
+        </div>
 
           <div className="mt-6">
-            <label className="block text-gray-700">Quantity & Size</label>
+            <label className="block text-gray-700">Quantity, Size & Color</label>
             <div className="flex gap-4 mt-2">
-              <select className="border p-2 w-1/3">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
+              <div className="flex items-center border rounded w-1/3">
+                <button 
+                  className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-l"
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                >
+                  <FaMinus />
+                </button>
+                <input 
+                  type="number"
+                  className="w-full text-center border-none focus:outline-none"
+                  value={quantity}
+                  onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
+                  min="1"
+                  max="100"
+                />
+                <button 
+                  className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-r"
+                  onClick={() => handleQuantityChange(quantity + 1)}
+                >
+                  <FaPlus />
+                </button>
+              </div>
+              <select 
+                className="border p-2 w-1/3"
+                value={selectedSize}
+                onChange={(e) => handleSizeChange(e.target.value)}
+              >
+                {product.sizes.map((size) => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
               </select>
-              <select className="border p-2 w-1/3">
-                <option>Onesize</option>
-              </select>
+              {product.colors.length > 1 && (
+                <select 
+                  className="border p-2 w-1/3"
+                  value={selectedColor}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                >
+                  {product.colors.map((color) => (
+                    <option key={color} value={color}>{color}</option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
 

@@ -31,7 +31,8 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [bannerImages, setBannerImages] = useState([]);
-  const [videoUrl, setVideoUrl] = useState('');
+  const [videoUrls, setVideoUrls] = useState([]);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   
   const productCarouselPlugin = useRef(
     Autoplay({ delay: 1500, stopOnInteraction: false })
@@ -83,12 +84,11 @@ export default function Home() {
         setBannerImages(bannerData);
 
         // Fetch video URL
-        const videoDocRef = doc(db, 'site/tls');
-        const videoDocSnap = await getDoc(videoDocRef);
-        if (videoDocSnap.exists()) {
-          setVideoUrl(videoDocSnap.data().video);
-          console.log(videoDocSnap.data().video);
-        }
+        const videoRef = collection(db, 'site/tls/video');
+        const videoSnapshot = await getDocs(videoRef);
+        const videoData = videoSnapshot.docs.map(doc => doc.data().url);
+        setVideoUrls(videoData);
+        
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -96,6 +96,10 @@ export default function Home() {
 
     fetchData();
   }, []);
+
+    const handleVideoEnd = () => {
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videoUrls.length);
+  };
 
   const renderCarousel = (images, plugin) => (
     <Carousel className="w-full" plugins={[plugin.current]}>
@@ -147,17 +151,21 @@ export default function Home() {
       </div>
 
       <div className="mb-8">
-  <video 
-    className="w-full autoPlay  loop muted controls preload='none'" 
-    controls 
-    preload="metadata"
-    playsInline
-    onError={(e) => console.error("Video error:", e)}
-  >
-    <source src='./shop.mp4' type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-</div>
+        {videoUrls.length > 0 ? (
+          <video 
+            className="w-full autoPlay loop muted controls preload='none'" 
+            controls 
+            preload="metadata"
+            playsInline
+            onEnded={handleVideoEnd}
+          >
+            <source src={videoUrls[currentVideoIndex]} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <p>No videos available.</p>
+        )}
+      </div>
 
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Browse Our Collection</h2>

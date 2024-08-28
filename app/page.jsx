@@ -148,13 +148,13 @@ export default function Home() {
 
       <div className="mb-8">
   <video 
-    className="w-full" 
+    className="w-full autoPlay  loop muted controls preload='none'" 
     controls 
     preload="metadata"
     playsInline
     onError={(e) => console.error("Video error:", e)}
   >
-    <source src={videoUrl} type="video/mp4" />
+    <source src='./shop.mp4' type="video/mp4" />
     Your browser does not support the video tag.
   </video>
 </div>

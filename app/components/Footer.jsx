@@ -42,10 +42,10 @@ Pullatt Arcade, Malappuram</p>
         <div className="border-t border-gray-700 pt-4">
           <nav className="flex flex-wrap justify-center mb-4">
             <Link href="/about" className="mx-2 hover:underline">About Us</Link>
-            <Link href="/privacy" className="mx-2 hover:underline">Privacy Policy</Link>
-            <Link href="/return" className="mx-2 hover:underline">Return Policy</Link>
-            <Link href="/shipping" className="mx-2 hover:underline">Shipping Policy</Link>
-            <Link href="/terms" className="mx-2 hover:underline">Terms and Conditions</Link>
+            <Link href="/policy#privacy-policy" className="mx-2 hover:underline">Privacy Policy</Link>
+            <Link href="/policy#return-policy" className="mx-2 hover:underline">Return Policy</Link>
+            <Link href="/policy#shipping-policy" className="mx-2 hover:underline">Shipping Policy</Link>
+            <Link href="/policy#terms-conditions" className="mx-2 hover:underline">Terms and Conditions</Link>
           </nav>
 
           <div className="text-sm text-center mb-4">

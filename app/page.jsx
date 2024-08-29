@@ -129,7 +129,7 @@ export default function Home() {
             {bannerImages.map((src, index) => (
               <CarouselItem key={index}>
                 <div className="w-full">
-                  <img src={src} alt={`Banner ${index + 1}`} className="w-full object-cover" style={{aspectRatio:"1/2", height:"auto"}}/>
+                  <img src={src} alt={`Banner ${index + 1}`} className="w-full" style={{aspectRatio:"2/1", height:"auto", objectFit:"contain"}}/>
                 </div>
               </CarouselItem>
             ))}

@@ -1,45 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaShoppingBag, FaGift, FaRing, FaBaby, FaPaintBrush, FaFemale } from 'react-icons/fa';
-import { GiEarrings, GiRing, GiTempleGate, GiFootprint, GiElephant, GiNecklace, GiBigDiamondRing, GiLipstick, GiCookingPot } from 'react-icons/gi';
-import { MdChildCare, MdHome, MdSchool, MdKitchen } from 'react-icons/md';
-import { BsFillBagFill, BsWater } from 'react-icons/bs';
-import { AiFillCar } from 'react-icons/ai';
 import ProductCard from '../components/ProductCard';
-import { db } from '../firebase'; 
+import { db } from '../firebase';
 import { collection, query, getDocs, limit, startAfter, where, orderBy } from 'firebase/firestore';
-
-const categories = [
-  { name: 'pouches', icon: <FaShoppingBag /> },
-  { name: 'Earrings', icon: <GiEarrings /> },
-  { name: 'Kids Items', icon: <MdChildCare /> },
-  { name: 'Rings', icon: <GiRing /> },
-  { name: 'Temple Design Ornaments', icon: <GiTempleGate /> },
-  { name: 'Footwear', icon: <GiFootprint /> },
-  { name: 'Fabric Toys', icon: <GiElephant /> },
-  { name: 'Home Appliances', icon: <MdHome /> },
-  { name: 'Water Bottles', icon: <BsWater /> },
-  { name: 'School Items', icon: <MdSchool /> },
-  { name: 'Bags', icon: <BsFillBagFill /> },
-  { name: 'Car Accessories', icon: <AiFillCar /> },
-  { name: 'Gift Items', icon: <FaGift /> },
-  { name: 'bangles', icon: <FaRing /> },
-  { name: 'Kitchen Appliances', icon: <MdKitchen /> },
-  { name: 'Makeup Items', icon: <GiLipstick /> },
-  { name: 'Bridal Collection', icon: <FaFemale /> },
-  { name: 'Fancy Items', icon: <GiBigDiamondRing /> },
-  { name: 'Necklaces', icon: <GiNecklace /> },
-  { name: 'Baby Products', icon: <FaBaby /> },
-  { name: 'Cookware', icon: <GiCookingPot /> },
-  { name: 'Art Supplies', icon: <FaPaintBrush /> },
-];
 
 const InfiniteScrollProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const observer = useRef();
   const pageRef = useRef(null);
@@ -60,6 +31,17 @@ const InfiniteScrollProductsPage = () => {
     },
     [loading, hasMore]
   );
+
+  const fetchCategories = async () => {
+    try {
+      const categoriesRef = collection(db, 'site/tls/categories');
+      const categorySnapshot = await getDocs(categoriesRef);
+      const categoryList = categorySnapshot.docs.map(doc => doc.data().category);
+      setCategories(categoryList);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const fetchProducts = useCallback(
     async (isInitialLoad = false) => {
@@ -102,6 +84,10 @@ const InfiniteScrollProductsPage = () => {
   );
 
   useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     setProducts([]);
     setLastVisible(null);
     setHasMore(true);
@@ -112,24 +98,21 @@ const InfiniteScrollProductsPage = () => {
     <div className="flex-grow container mx-auto px-4 py-8 mt-12" ref={pageRef}>
       <h1 className="text-2xl lg:text-3xl font-bold mb-6 text-center">All Products</h1>
 
-      {/* Category Filter */}
-      <div className="mb-8 flex flex-wrap gap-2 justify-center">
-        <button
-          onClick={() => setSelectedCategory('All')}
-          className={`px-4 py-2 rounded ${selectedCategory === 'All' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+      {/* Category Dropdown */}
+      <div className="mb-8 flex flex-col sm:flex-row justify-center items-center gap-2">
+        <h2 className='text-lg sm:text-2xl'>Category:</h2>
+        <select
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="px-2 py-2 rounded bg-gray-200 text-center sm:text-left w-full sm:w-auto"
+          value={selectedCategory}
         >
-          All
-        </button>
-        {categories.map((category) => (
-          <button
-            key={category.name}
-            onClick={() => setSelectedCategory(category.name)}
-            className={`px-4 py-2 rounded flex items-center ${selectedCategory === category.name ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-          >
-            {category.icon}
-            <span className="ml-2">{category.name}</span>
-          </button>
-        ))}
+          <option value="All">All</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Product Grid */}

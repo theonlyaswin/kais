@@ -19,6 +19,7 @@ const BillingForm = () => {
     phone: '',
     email: ''
   });
+  const [formErrors, setFormErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
   const router = useRouter();
 
@@ -97,10 +98,57 @@ const BillingForm = () => {
     }
   }, [cartData]);
 
+  const validateForm = () => {
+    const errors = {};
+    
+    // Name validation
+    if (formData.name.trim() === '') {
+      errors.name = 'Name is required';
+    }
+
+    // Street validation
+    if (formData.street.trim() === '') {
+      errors.street = 'Street address is required';
+    }
+
+    // City validation
+    if (formData.city.trim() === '') {
+      errors.city = 'City is required';
+    }
+
+    // District validation
+    if (formData.district.trim() === '') {
+      errors.district = 'District is required';
+    }
+
+    // Postcode validation
+    if (formData.postcode.trim() !== '') {
+      if (!/^\d{6}$/.test(formData.postcode)) {
+        errors.postcode = 'Postcode must be a 6-digit number';
+      }
+    }
+
+    // Phone validation
+    if (formData.phone.trim() === '') {
+      errors.phone = 'Phone number is required';
+    } else if (!/^\d+$/.test(formData.phone)) {
+      errors.phone = 'Phone number must contain only digits';
+    }
+
+    // Email validation
+    if (formData.email.trim() === '') {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Email is invalid';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   useEffect(() => {
     const checkFormValidity = () => {
-      const requiredFields = ['name', 'street', 'city', 'district', 'phone', 'email'];
-      const isValid = requiredFields.every(field => formData[field].trim() !== '');
+      const isValid = validateForm();
       setIsFormValid(isValid);
     };
 
@@ -117,7 +165,7 @@ const BillingForm = () => {
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!validateForm()) return;
 
     try {
       const orderRef = ref(database, 'Orders');
@@ -159,10 +207,10 @@ const BillingForm = () => {
       const encodedMessage = encodeURIComponent(message);
 
       const makeCall = async () => {
-        const accountSid = 'ACfc874a169c3846935b075dc5f217ba34';
-        const authToken = 'c330a10ea93c1eaf4255e03176940120';
-        const twilioPhoneNumber = '+16366424846';
-        const recipientPhoneNumber = '+918089718880';
+        const accountSid = process.env.TWILIO_AC_SID;
+        const authToken = process.env.TWILIO_AC_TOKEN;
+        const twilioPhoneNumber = process.env.TWILIO_PH_NO;
+        const recipientPhoneNumber = process.env.TWILIO_RECEIVER_NO;
 
         const twiml = `
           <Response>
@@ -206,7 +254,7 @@ const BillingForm = () => {
 
       const whatsappUrl = `https://wa.me/+918089718880?text=${encodedMessage}`;
 
-      // Open WhatsApp link in a new tab
+
       window.open(whatsappUrl, '_blank');
       router.push('/products');
       
@@ -216,7 +264,7 @@ const BillingForm = () => {
   };
 
   return (
-    <div className='flex justify-center items-center w-full px-4 sm:px-6 lg:px-8'>
+    <div className='flex justify-center items-center w-full px-4 sm:px-6 lg:px-8 mt-10'>
       <div className="flex flex-col lg:flex-row gap-8 py-6 mt-14 mb-8 w-full max-w-6xl">
         <div className="w-full lg:w-2/3">
           <h2 className="text-xl font-bold mb-4 pb-2 border-b">Billing details</h2>
@@ -228,11 +276,12 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="name"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.name ? 'border-red-500' : ''}`}
                 required
                 value={formData.name}
                 onChange={handleInputChange}
               />
+              {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
             </div>
             <div>
               <label htmlFor="street" className="block mb-1">
@@ -242,11 +291,12 @@ const BillingForm = () => {
                 type="text"
                 id="street"
                 placeholder="House number and street name"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.street ? 'border-red-500' : ''}`}
                 required
                 value={formData.street}
                 onChange={handleInputChange}
               />
+              {formErrors.street && <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>}
             </div>
             <div>
               <label htmlFor="city" className="block mb-1">
@@ -255,11 +305,12 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="city"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.city ? 'border-red-500' : ''}`}
                 required
                 value={formData.city}
                 onChange={handleInputChange}
               />
+              {formErrors.city && <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>}
             </div>
             <div>
               <label htmlFor="district" className="block mb-1">
@@ -268,11 +319,12 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="district"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.district ? 'border-red-500' : ''}`}
                 required
                 value={formData.district}
                 onChange={handleInputChange}
               />
+              {formErrors.district && <p className="text-red-500 text-sm mt-1">{formErrors.district}</p>}
             </div>
             <div>
               <label htmlFor="postcode" className="block mb-1">
@@ -281,10 +333,11 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="postcode"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.postcode ? 'border-red-500' : ''}`}
                 value={formData.postcode}
                 onChange={handleInputChange}
               />
+              {formErrors.postcode && <p className="text-red-500 text-sm mt-1">{formErrors.postcode}</p>}
             </div>
             <div>
               <label htmlFor="phone" className="block mb-1">
@@ -293,11 +346,12 @@ const BillingForm = () => {
               <input
                 type="tel"
                 id="phone"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.phone ? 'border-red-500' : ''}`}
                 required
                 value={formData.phone}
                 onChange={handleInputChange}
               />
+              {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
             </div>
             <div>
               <label htmlFor="email" className="block mb-1">
@@ -306,11 +360,12 @@ const BillingForm = () => {
               <input
                 type="email"
                 id="email"
-                className="w-full p-2 border rounded"
+                className={`w-full p-2 border rounded ${formErrors.email ? 'border-red-500' : ''}`}
                 required
                 value={formData.email}
                 onChange={handleInputChange}
               />
+              {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
             </div>
           </form>
         </div>
@@ -349,7 +404,7 @@ const BillingForm = () => {
             >
               PLACE ORDER
             </button>
-          </div>
+            </div>
         </div>
       </div>
     </div>

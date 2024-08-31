@@ -52,32 +52,34 @@ const CartPage = () => {
     fetchCartItems();
   }, [uniqueDeviceId]);
 
+  const fetchProductDetails = async (items) => {
+    const promises = items.map(async (item) => {
+      const productRef = doc(firestore, `site/tls/products/${item.id}`);
+      const productDoc = await getDoc(productRef);
+
+      if (productDoc.exists()) {
+        return {
+          ...item,
+          image: productDoc.data().images[0], // Assuming the first image is the main image
+          name: productDoc.data().name,
+          // Use the price from the cart instead of Firestore
+          price: item.price,
+        };
+      } else {
+        console.log(`No product found for ID: ${item.id}`);
+        return null;
+      }
+    });
+
+    const results = await Promise.all(promises);
+    setCartData(results.filter(item => item !== null));
+  };
+
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      const promises = cartItems.map(async (item) => {
-        const productRef = doc(firestore, `site/tls/products/${item.id}`);
-        const productDoc = await getDoc(productRef);
-
-        if (productDoc.exists()) {
-          return {
-            ...item,
-            image: productDoc.data().images[0], // Assuming the first image is the main image
-            name: productDoc.data().name,
-            // Use the price from the cart instead of Firestore
-            price: item.price,
-          };
-        } else {
-          console.log(`No product found for ID: ${item.id}`);
-          return null;
-        }
-      });
-
-      const results = await Promise.all(promises);
-      setCartData(results.filter(item => item !== null));
-    };
-
     if (cartItems.length > 0) {
-      fetchProductDetails();
+      fetchProductDetails(cartItems);
+    } else {
+      setCartData([]);
     }
   }, [cartItems]);
 
@@ -89,6 +91,8 @@ const CartPage = () => {
 
     if (cartData.length > 0) {
       calculateTotalPrice();
+    } else {
+      setTotalPrice(0);
     }
   }, [cartData]);
 
@@ -101,12 +105,14 @@ const CartPage = () => {
 
     setCartItems(updatedCartItems);
     await set(ref(database, `${uniqueDeviceId}/Mycarts`), updatedCartItems);
+    fetchProductDetails(updatedCartItems);
   };
 
   const removeItem = async (id) => {
     const updatedCartItems = cartItems.filter(item => item.id !== id);
     setCartItems(updatedCartItems);
     await set(ref(database, `${uniqueDeviceId}/Mycarts`), updatedCartItems);
+    fetchProductDetails(updatedCartItems);
   };
 
   return (

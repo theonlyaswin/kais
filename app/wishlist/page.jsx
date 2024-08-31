@@ -6,6 +6,8 @@ import { ref, get, set } from 'firebase/database';
 import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { database, db as firestore } from '../firebase';
 import { AiOutlineDelete, AiOutlinePlus } from 'react-icons/ai';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -81,8 +83,12 @@ const WishlistPage = () => {
 
       // Remove from wishlist
       await removeFromWishlist(item.id);
+
+      // Show toast notification
+      toast.success(`${item.name} added to cart!`);
     } catch (error) {
       console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart.");
     }
   };
 
@@ -131,6 +137,7 @@ const WishlistPage = () => {
           <p>Your wishlist is empty.</p>
         )}
       </div>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover draggable />
     </div>
   );
 };

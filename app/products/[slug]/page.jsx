@@ -298,53 +298,61 @@ const ProductPage = ({ params }) => {
           <span className="line-through text-gray-500">₹{oldPrice}</span>
         </div>
 
-          <div className="mt-6">
-            <label className="block text-gray-700">Quantity, Size & Color</label>
-            <div className="flex gap-4 mt-2">
-              <div className="flex items-center border rounded w-1/3">
-                <button 
-                  className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-l"
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                >
-                  <FaMinus />
-                </button>
-                <input 
-                  type="number"
-                  className="w-full text-center border-none focus:outline-none"
-                  value={quantity}
-                  onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
-                  min="1"
-                  max="100"
-                />
-                <button 
-                  className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-r"
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                >
-                  <FaPlus />
-                </button>
-              </div>
-              <select 
-                className="border p-2 w-1/3"
-                value={selectedSize}
-                onChange={(e) => handleSizeChange(e.target.value)}
-              >
-                {product.sizes.map((size) => (
-                  <option key={size} value={size}>{size}</option>
-                ))}
-              </select>
-              {product.colors.length > 1 && (
-                <select 
-                  className="border p-2 w-1/3"
-                  value={selectedColor}
-                  onChange={(e) => handleColorChange(e.target.value)}
-                >
-                  {product.colors.map((color) => (
-                    <option key={color} value={color}>{color}</option>
-                  ))}
-                </select>
-              )}
-            </div>
-          </div>
+
+<div className="mt-6">
+  <label className="block text-gray-700">Quantity, Size & Color</label>
+  <div className="flex gap-4 mt-2">
+    <div className="flex items-center border rounded w-1/3">
+      <button 
+        className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-l"
+        onClick={() => handleQuantityChange(quantity - 1)}
+      >
+        <FaMinus />
+      </button>
+      <input 
+        type="number"
+        className="w-full text-center border-none focus:outline-none"
+        value={quantity}
+        onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
+        min="1"
+        max="100"
+      />
+      <button 
+        className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-r"
+        onClick={() => handleQuantityChange(quantity + 1)}
+      >
+        <FaPlus />
+      </button>
+    </div>
+    
+    {/* Render size dropdown only if there is more than one size */}
+    {product.sizes.length > 1 && (
+      <select 
+        className="border p-2 w-1/3"
+        value={selectedSize}
+        onChange={(e) => handleSizeChange(e.target.value)}
+      >
+        {product.sizes.map((size) => (
+          <option key={size} value={size}>{size}</option>
+        ))}
+      </select>
+    )}
+
+    {/* Render color dropdown only if there is more than one color */}
+    {product.colors.length > 1 && (
+      <select 
+        className="border p-2 w-1/3"
+        value={selectedColor}
+        onChange={(e) => handleColorChange(e.target.value)}
+      >
+        {product.colors.map((color) => (
+          <option key={color} value={color}>{color}</option>
+        ))}
+      </select>
+    )}
+  </div>
+</div>
+
 
           <div className="flex space-x-4 mt-6">
             <button 

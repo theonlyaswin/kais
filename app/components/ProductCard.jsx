@@ -115,7 +115,6 @@ const handleWishlistToggle = async (e) => {
           {originalPrice && (
             <>
               <span className="text-sm text-gray-500 line-through ml-2">₹{originalPrice}</span>
-              <span className="text-sm text-green-600 ml-2">{discountPercentage}% OFF</span>
             </>
           )}
         </div>

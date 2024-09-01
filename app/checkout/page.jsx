@@ -248,9 +248,6 @@ const BillingForm = () => {
 
       makeCall();
 
-      const whatsappUrl = `https://wa.me/+918089718880?text=${encodedMessage}`;
-
-
       window.location.href="/invoice.html"
       router.push('/products');
       

@@ -195,6 +195,7 @@ const BillingForm = () => {
 
       await set(ref(database, `Orders/${orderId}`), orderData);
 
+      localStorage.setItem('recdata', JSON.stringify(orderData))
       // Clear the cart
       const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
       await set(cartRef, null);
@@ -240,22 +241,14 @@ const BillingForm = () => {
             }),
           });
 
-          if (response.ok) {
-            console.log("Call placed successfully");
-          } else {
-            console.error("Failed to place the call");
-          }
         } catch (error) {
-          console.error("Error placing the call:", error);
+          console.error(error);
         }
       };
 
       makeCall();
 
-      const whatsappUrl = `https://wa.me/+918089718880?text=${encodedMessage}`;
-
-
-      window.open(whatsappUrl, '_blank');
+      window.location.href="/invoice.html"
       router.push('/products');
       
     } catch (error) {
@@ -276,12 +269,12 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="name"
-                className={`w-full p-2 border rounded ${formErrors.name ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.name ? '' : ''}`}
                 required
                 value={formData.name}
                 onChange={handleInputChange}
               />
-              {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
+              {formErrors.name && <p className="text-sm mt-1">{formErrors.name}</p>}
             </div>
             <div>
               <label htmlFor="street" className="block mb-1">
@@ -291,12 +284,12 @@ const BillingForm = () => {
                 type="text"
                 id="street"
                 placeholder="House number and street name"
-                className={`w-full p-2 border rounded ${formErrors.street ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.street ? '' : ''}`}
                 required
                 value={formData.street}
                 onChange={handleInputChange}
               />
-              {formErrors.street && <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>}
+              {formErrors.street && <p className="text-sm mt-1">{formErrors.street}</p>}
             </div>
             <div>
               <label htmlFor="city" className="block mb-1">
@@ -305,12 +298,12 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="city"
-                className={`w-full p-2 border rounded ${formErrors.city ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.city ? '' : ''}`}
                 required
                 value={formData.city}
                 onChange={handleInputChange}
               />
-              {formErrors.city && <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>}
+              {formErrors.city && <p className="text-sm mt-1">{formErrors.city}</p>}
             </div>
             <div>
               <label htmlFor="district" className="block mb-1">
@@ -319,39 +312,39 @@ const BillingForm = () => {
               <input
                 type="text"
                 id="district"
-                className={`w-full p-2 border rounded ${formErrors.district ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.district ? '' : ''}`}
                 required
                 value={formData.district}
                 onChange={handleInputChange}
               />
-              {formErrors.district && <p className="text-red-500 text-sm mt-1">{formErrors.district}</p>}
+              {formErrors.district && <p className="text-sm mt-1">{formErrors.district}</p>}
             </div>
             <div>
               <label htmlFor="postcode" className="block mb-1">
                 Postcode / ZIP (optional)
               </label>
               <input
-                type="text"
+                type="number"
                 id="postcode"
-                className={`w-full p-2 border rounded ${formErrors.postcode ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.postcode ? '' : ''}`}
                 value={formData.postcode}
                 onChange={handleInputChange}
               />
-              {formErrors.postcode && <p className="text-red-500 text-sm mt-1">{formErrors.postcode}</p>}
+              {formErrors.postcode && <p className="text-sm mt-1">{formErrors.postcode}</p>}
             </div>
             <div>
               <label htmlFor="phone" className="block mb-1">
                 Phone <span className="text-red-500">*</span>
               </label>
               <input
-                type="tel"
+                type="number"
                 id="phone"
-                className={`w-full p-2 border rounded ${formErrors.phone ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.phone ? '' : ''}`}
                 required
                 value={formData.phone}
                 onChange={handleInputChange}
               />
-              {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
+              {formErrors.phone && <p className="text-sm mt-1">{formErrors.phone}</p>}
             </div>
             <div>
               <label htmlFor="email" className="block mb-1">
@@ -360,12 +353,12 @@ const BillingForm = () => {
               <input
                 type="email"
                 id="email"
-                className={`w-full p-2 border rounded ${formErrors.email ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded ${formErrors.email ? '' : ''}`}
                 required
                 value={formData.email}
                 onChange={handleInputChange}
               />
-              {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
+              {formErrors.email && <p className="text-sm mt-1">{formErrors.email}</p>}
             </div>
           </form>
         </div>

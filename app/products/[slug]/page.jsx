@@ -7,6 +7,7 @@ import { doc, getDoc, collection, query, where, getDocs,} from 'firebase/firesto
 import { db as firestore, database } from '../../firebase';
 import { useRouter } from 'next/navigation';
 import { ref, get, set } from 'firebase/database'
+import Head from 'next/head';
 
 const ProductPage = ({ params }) => {
   const router = useRouter();
@@ -261,9 +262,21 @@ const ProductPage = ({ params }) => {
   };
 
   if (!product) return <p>Loading...</p>;
-
+  document.title=product.description || "Check out this amazing product at My Store!";
   return (
     <div className="container mx-auto px-4 my-20">
+      <Head>
+        <title>{product.title} | My Store</title>
+        <meta name="description" content={product.description || "Check out this amazing product at My Store!"} />
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.description || "Check out this amazing product at My Store!"} />
+        <meta property="og:image" content={product.images[0]} />
+        <meta property="og:url" content={`https://lifestyle.kaisonline.com/product/${params.slug}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.title} />
+        <meta name="twitter:description" content={product.description || "Check out this amazing product at My Store!"} />
+        <meta name="twitter:image" content={product.images[0]} />
+      </Head>
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Side: Image Thumbnails */}
         {product.images.length > 1 && (

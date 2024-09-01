@@ -160,10 +160,9 @@ export default function Home() {
             onEnded={handleVideoEnd}
           >
             <source src={videoUrls[currentVideoIndex]} type="video/mp4" />
-            Your browser does not support the video tag.
           </video>
         ) : (
-          <p>No videos available.</p>
+          <p></p>
         )}
       </div>
 

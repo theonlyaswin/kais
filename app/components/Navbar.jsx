@@ -97,6 +97,13 @@ const Navbar = () => {
               <FaHeart size={18} />
               <span>Wishlist</span>
             </Link>
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="flex flex-col items-center text-black hover:text-gray-600"
+            >
+              <FaEllipsisH size={18} />
+              <span>More</span>
+            </button>
           </div>
         </div>
       )}
@@ -123,6 +130,24 @@ const Navbar = () => {
                 <FaSearch className="text-gray-400" />
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {isDrawerOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 transition-transform duration-300 transform translate-y-0">
+            <div className="flex flex-col space-y-4">
+              <Link href="/orders" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Orders</Link>
+              <Link href="/about" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>About</Link>
+              <Link href="/contact" className="text-black hover:text-gray-600" onClick={() => setIsDrawerOpen(false)}>Contact</Link>
+            </div>
+            <button
+              onClick={() => setIsDrawerOpen(false)}
+              className="mt-4 w-full bg-gray-200 text-black py-2 rounded-md hover:bg-gray-300"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

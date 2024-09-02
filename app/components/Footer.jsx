@@ -34,8 +34,9 @@ const Footer = () => {
             <p className="flex items-center"><FaWhatsapp className="mr-2" />+91 8089 71 8880</p>
             <p className="flex items-center"><BsClock className="mr-2" /> Mon-Sat, 10 AM to 6 PM</p>
             <p className="flex items-center"><MdEmail className="mr-2" /> mail@kaisonline.com</p>
-            <p className="flex items-center"><MdLocationOn className="mr-2" />Kais the Studio
-Pullatt Arcade, Malappuram</p>
+            <p className="flex items-center"><MdLocationOn className="mr-2" />Kais the Studio Pullatt Arcade,</p>
+            <p className="flex items-center">Kariparambu Tirurangadi PO</p>
+            <p className="flex items-center">Malappuram Dist, Kerala - 676306</p>
           </div>
         </div>
 
@@ -52,14 +53,14 @@ Pullatt Arcade, Malappuram</p>
             <h4 className="font-semibold mb-2">Most searched on store</h4>
             <div className="flex flex-wrap justify-center">
               {['Stationary', 'School', 'Kitchenware', 'Home Decor'].map((category, index) => (
-                <Link key={index} href={`/category/${category.toLowerCase()}`} className="mx-2 hover:underline">
+                <Link key={index} href={`/search/${category.toLowerCase()}`} className="mx-2 hover:underline">
                   {category}
                 </Link>
               ))}
             </div>
           </div>
           <div className="flex justify-center mt-3">
-            © 2024 Azora Ads. All rights reserved.
+            © 2024 <Link href={"https://azoraads.com"}><span className='mx-1 text-blue-600 cursor-pointer'>Azora Ads.</span></Link> All rights reserved.
           </div>
         </div>
       </div>

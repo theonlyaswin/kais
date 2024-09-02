@@ -17,7 +17,7 @@ const SearchedProducts = ({ params }) => {
                 const querySnapshot = await getDocs(productsRef);
                 const searchTerm = params.slug.toLowerCase();
 
-                // Filter products by title and categories
+                // Filter products by title, categories, and keywords
                 const searchedProducts = querySnapshot.docs
                     .map((doc) => ({
                         id: doc.id,
@@ -27,7 +27,10 @@ const SearchedProducts = ({ params }) => {
                         const titleMatch = product.title && product.title.toLowerCase().includes(searchTerm);
                         const categoryMatch = Array.isArray(product.categories) 
                             && product.categories.some(category => category.toLowerCase().includes(searchTerm));
-                        return titleMatch || categoryMatch;
+                        const keywordsMatch = Array.isArray(product.keywords) 
+                            && product.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm));
+
+                        return titleMatch || categoryMatch || keywordsMatch;
                     });
 
                 console.log('Search term:', searchTerm);
@@ -45,8 +48,8 @@ const SearchedProducts = ({ params }) => {
     }, [params.slug]);
 
     return (
-        <div className="flex-grow container mx-auto px-4 py-8 mt-12">
-            <h1 className="text-3xl font-bold mb-6 text-center">Search Results for "{params.slug}"</h1>
+        <div className="flex-grow container mx-auto px-4 py-8 mt-16">
+            <h1 className="text-3xl font-bold mb-3 text-center">Search Results</h1>
 
             {loading ? (
                 <p className="text-center mt-4">Loading...</p>
@@ -69,7 +72,10 @@ const SearchedProducts = ({ params }) => {
                     ))}
                 </div>
             ) : (
-                <p className="text-center text-gray-500 mt-8">No products found matching your search.</p>
+                <div className='flex justify-center items-center flex-col'>
+                <h3 className="text-center text-gray-500 mt-8">No products found matching your search.</h3>
+                <img src="/nosearch.gif" alt="Not Found" className='w-64'/>
+                </div>
             )}
         </div>
     );

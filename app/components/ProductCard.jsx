@@ -126,7 +126,7 @@ const handleWishlistToggle = async (e) => {
         <p className="text-sm">₹{price}</p>
         <div className='flex justify-center items-center'>
           <button
-          className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center "
+          className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-white border-2 border-white hover:text-black hover:border-black hover:border-2 transition-colors duration-300 flex items-center justify-center "
           onClick={handleAddToCart}
         >
           <span>Add to Cart</span>

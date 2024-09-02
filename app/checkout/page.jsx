@@ -180,7 +180,7 @@ const BillingForm = () => {
         name: formData.name,
         orderId: orderId,
         phone: formData.phone,
-        status: "403",
+        status: "202",
         userId: uniqueDeviceId,
         data: cartData.map(item => ({
           imageUrl: item.images && item.images.length > 0 ? item.images[0] : '',

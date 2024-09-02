@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { MdEmail, MdLocationOn } from 'react-icons/md';
 import { BsClock } from 'react-icons/bs';
-import { SiPhonepe, SiGooglepay, SiPaytm, SiVisa, SiMastercard } from 'react-icons/si';
 
 const Footer = () => {
   return (
@@ -19,12 +18,15 @@ const Footer = () => {
               className="invert brightness-0 mb-4"
             />
             <p className="max-w-md">Discover elegance at Kais</p>
-            <div className="flex mt-4">
-              <Link href="#" className="mr-4 text-2xl hover:text-blue-500">
+            <div className="flex mt-4 gap-4">
+              <Link target="_blank" href="https://www.facebook.com/KaisTheStudio/" className=" text-2xl hover:text-blue-500">
                 <FaFacebook />
               </Link>
-              <Link href="#" className="text-2xl hover:text-pink-500">
+              <Link target="_blank" href="https://www.instagram.com/kaisthestudio?igsh=MXJnZ3pwMDZqNzdhZQ%3D%3D" className="text-2xl hover:text-pink-500">
                 <FaInstagram />
+              </Link>
+              <Link href="mailto:mail@kaisonline.com" className="text-2xl hover:text-green-600">
+                <MdEmail />
               </Link>
             </div>
           </div>

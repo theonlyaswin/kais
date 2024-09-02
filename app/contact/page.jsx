@@ -20,8 +20,8 @@ const ContactUs = () => {
     e.preventDefault();
 
     emailjs.send(
-      process.env.EMAIL_SERVICE_ID, 
-      process.env.EMAIL_TMP_ID, 
+      process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID, 
+      process.env.NEXT_PUBLIC_EMAIL_TMP_ID, 
       {
         to_email: 'mail@kaisonline.com',
         from_name: formData.name,
@@ -29,7 +29,7 @@ const ContactUs = () => {
         subject: formData.subject,
         message: formData.message
       },
-      process.env.EMAIL_USER_ID 
+      process.env.NEXT_PUBLIC_EMAIL_USER_ID 
     )
     .then((response) => {
       console.log('Email sent successfully:', response);

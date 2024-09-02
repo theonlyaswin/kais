@@ -208,10 +208,10 @@ const BillingForm = () => {
       const encodedMessage = encodeURIComponent(message);
 
       const makeCall = async () => {
-        const accountSid = process.env.TWILIO_AC_SID;
-        const authToken = process.env.TWILIO_AC_TOKEN;
-        const twilioPhoneNumber = process.env.TWILIO_PH_NO;
-        const recipientPhoneNumber = process.env.TWILIO_RECEIVER_NO;
+        const accountSid = process.env.NEXT_PUBLIC_TWILIO_AC_SID;
+        const authToken = process.env.NEXT_PUBLIC_TWILIO_AC_TOKEN;
+        const twilioPhoneNumber = process.env.NEXT_PUBLIC_TWILIO_PH_NO;
+        const recipientPhoneNumber = process.env.NEXT_PUBLIC_TWILIO_RECEIVER_NO;
 
         const twiml = `
           <Response>

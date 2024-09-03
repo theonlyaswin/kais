@@ -27,8 +27,7 @@ for (let i = 0; i < recData.data.length; i++) {
   subtotal = subtotal + Number(returnData.price);
   tbody.innerHTML = tbody.innerHTML + listTemplate;
   document.getElementById('cart-sub-tot').textContent = '₹' + subtotal;
-  document.getElementById('cart-gst').textContent = '₹' + (subtotal / 100) * 8;
-  var tot_amount = Number(subtotal) + Number((subtotal / 100) * 8);
+  var tot_amount = Number(subtotal);
   document.getElementById('order-tot').textContent = '₹' + tot_amount;
 
 }

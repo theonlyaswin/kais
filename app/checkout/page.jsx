@@ -164,100 +164,102 @@ const BillingForm = () => {
   };
 
   const handlePlaceOrder = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    try {
-      const orderRef = ref(database, 'tls/Orders');
-      const newOrderRef = push(orderRef);
-      const orderId = newOrderRef.key;
-      
-      const orderData = {
-        address1: formData.street,
-        address2: formData.city,
-        address3: formData.district,
-        email: formData.email,
-        name: formData.name,
-        orderId: orderId,
-        phone: formData.phone,
-        status: "202",
-        userId: uniqueDeviceId,
-        data: cartData.map(item => ({
-          imageUrl: item.images && item.images.length > 0 ? item.images[0] : '',
-          label: item.title,
-          price: item.price,
-          productLabelId: 0, // Assuming this is not available in your current data
-          productTitle: item.title,
-          productid: item.id,
-          quantity: item.quantity
-        }))
-      };
+  try {
+    const orderRef = ref(database, "tls/Orders");
+    const newOrderRef = push(orderRef);
+    const orderId = newOrderRef.key;
 
-      await set(ref(database, `tls/Orders/${orderId}`), orderData);
+    const orderData = {
+      address1: formData.street,
+      address2: formData.city,
+      address3: formData.district,
+      email: formData.email,
+      name: formData.name,
+      orderId: orderId,
+      phone: formData.phone,
+      status: "202",
+      userId: uniqueDeviceId,
+      data: cartData.map((item) => ({
+        imageUrl: item.images && item.images.length > 0 ? item.images[0] : "",
+        label: item.title,
+        price: item.price,
+        productLabelId: 0, // Assuming this is not available in your current data
+        productTitle: item.title,
+        productid: item.id,
+        quantity: item.quantity,
+      })),
+    };
 
-      localStorage.setItem('recdata', JSON.stringify(orderData))
-      // Clear the cart
-      const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
-      await set(cartRef, null);
+    await set(ref(database, `tls/Orders/${orderId}`), orderData);
 
-      // Format the order details for WhatsApp message
-      const message = `Hi, an order for Kai's Lifestyle Studios\n` +
-                      `Order ID: ${orderId}\n` + `and I would like to continue the payment to deliver my order.`
+    localStorage.setItem("recdata", JSON.stringify(orderData));
+    // Clear the cart
+    const cartRef = ref(database, `${uniqueDeviceId}/Mycarts`);
+    await set(cartRef, null);
 
-      // Encode the message to be URL-safe
-      const encodedMessage = encodeURIComponent(message);
+    // Format the order details for WhatsApp message
+    const message =
+      `Hi, an order for Kai's Lifestyle Studios\n` +
+      `Order ID: ${orderId}\n` +
+      `and I would like to continue the payment to deliver my order.`;
 
-      const makeCall = async () => {
-        const accountSid = process.env.NEXT_PUBLIC_TWILIO_AC_SID;
-        const authToken = process.env.NEXT_PUBLIC_TWILIO_AC_TOKEN;
-        const twilioPhoneNumber = process.env.NEXT_PUBLIC_TWILIO_PH_NO;
-        const recipientPhoneNumber = process.env.NEXT_PUBLIC_TWILIO_RECEIVER_NO;
+    // Encode the message to be URL-safe
+    const encodedMessage = encodeURIComponent(message);
 
-        const twiml = `
-          <Response>
-            <Say>Hello! You Have Received an Order From Kays Lifestyle , Please Check on Admin Panel to Confirm Order.</Say>
-            <Pause length="1"/>
-            <Say> I Repeat</Say>
-            <Pause length="1"/>
-            <Say>You have received an order from kays lifestyle, check the admin panel to confirm the order</Say>
-            <Pause length="2"/>
-            <Say>Thank You</Say>
-          </Response>
-        `;
+    const makeCall = async () => {
+      const accountSid = process.env.NEXT_PUBLIC_TWILIO_AC_SID;
+      const authToken = process.env.NEXT_PUBLIC_TWILIO_AC_TOKEN;
+      const twilioPhoneNumber = process.env.NEXT_PUBLIC_TWILIO_PH_NO;
+      const recipientPhoneNumber = process.env.NEXT_PUBLIC_TWILIO_RECEIVER_NO;
 
-        const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`;
+      const twiml = `
+        <Response>
+          <Say>Hello! You Have Received an Order From Kays Lifestyle , Please Check on Admin Panel to Confirm Order.</Say>
+          <Pause length="1"/>
+          <Say> I Repeat</Say>
+          <Pause length="1"/>
+          <Say>You have received an order from kays lifestyle, check the admin panel to confirm the order</Say>
+          <Pause length="2"/>
+          <Say>Thank You</Say>
+        </Response>
+      `;
 
-        try {
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: "Basic " + btoa(`${accountSid}:${authToken}`),
-            },
-            body: new URLSearchParams({
-              From: twilioPhoneNumber,
-              To: recipientPhoneNumber,
-              Twiml: twiml,
-            }),
-          });
+      const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`;
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Basic " + btoa(`${accountSid}:${authToken}`),
+          },
+          body: new URLSearchParams({
+            From: twilioPhoneNumber,
+            To: recipientPhoneNumber,
+            Twiml: twiml,
+          }),
+        });
 
         if (response.ok) {
-          window.location.href="/invoice.html"
-          router.push('/products');
+          window.location.href = "/invoice.html";
+          router.push("/products");
         } else {
-          console.error('Request failed with status code:', response.status);
+          console.error("Request failed with status code:", response.status);
         }
-
-    } catch (error) {
-      console.error(error);
-    }
+      } catch (error) {
+        console.error(error);
+      }
 
       makeCall();
-      
-    } catch (error) {
-      console.error("Error placing order:", error);
-    }
-  };
+    };
+  } catch (error) {
+    console.error("Error placing order:", error);
+  }
+};
+
 
   return (
     <div className='flex justify-center items-center w-full px-4 sm:px-6 lg:px-8 mt-10'>

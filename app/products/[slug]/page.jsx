@@ -59,7 +59,7 @@ const ProductPage = ({ params }) => {
           
           // Process color variants
           const colorVariants = productData.colorVarients || [];
-          const images = [];
+          const images = productData.images || [];
           const colors = [];
           
           colorVariants.forEach(variant => {
@@ -369,12 +369,12 @@ const ProductPage = ({ params }) => {
 
           <div className="flex space-x-4 mt-6">
             <button 
-              className="border-2 border-black px-4 py-2 rounded" 
+              className="border-2 border-black px-4 py-2 rounded text-sm" 
               onClick={handleAddToBag}
             >
               ADD TO BAG
             </button>
-            <button className="bg-black text-white px-4 py-2 rounded" onClick={handleBuynow}>BUY NOW</button>
+            <button className="bg-black text-white px-4 py-2 rounded text-sm" onClick={handleBuynow}>BUY NOW</button>
           </div>
 
           <div className="space-y-2 mt-6 border-2 p-4 md:p-8">

@@ -252,9 +252,8 @@ const BillingForm = () => {
       } catch (error) {
         console.error(error);
       }
-
-      makeCall();
     };
+    makeCall();
   } catch (error) {
     console.error("Error placing order:", error);
   }

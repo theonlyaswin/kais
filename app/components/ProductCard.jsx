@@ -122,12 +122,13 @@ const handleWishlistToggle = async (e) => {
 
       {/* Hover Effect for Add to Cart */}
       <div className="absolute bottom-0 left-0 right-0 bg-white text-black p-4 transform translate-y-0 group-hover:translate-y-0 transition-transform duration-300 lg:translate-y-full">
-        <h3 className="text-lg font-semibold">{name}</h3>
+        <h3 className="text-lg font-semibold" style={{fontSize:"16px"}}>{name}</h3>
         <p className="text-sm">₹{price}</p>
         <div className='flex justify-center items-center'>
           <button
           className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-white border-2 border-white hover:text-black hover:border-black hover:border-2 transition-colors duration-300 flex items-center justify-center "
           onClick={handleAddToCart}
+          style={{fontSize:"13px"}}
         >
           <span>Add to Cart</span>
         </button>

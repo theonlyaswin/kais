@@ -34,7 +34,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
             <p className="flex items-center"><FaWhatsapp className="mr-2" />+91 8089 71 8880</p>
-            <p className="flex items-center"><BsClock className="mr-2" /> Mon-Sat, 10 AM to 6 PM</p>
+            <p className="flex items-center"><BsClock className="mr-2" /> Mon-Sat, 9 AM to 9 PM</p>
             <p className="flex items-center"><MdEmail className="mr-2" /> mail@kaisonline.com</p>
             <p className="flex items-center"><MdLocationOn className="mr-2" />Kais the Studio Pullatt Arcade,</p>
             <p className="flex items-center">Kariparambu Tirurangadi PO</p>

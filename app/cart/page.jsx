@@ -116,7 +116,7 @@ const CartPage = () => {
   };
 
   return (
-    <div className='flex justify-center items-center'>
+    <div className='flex justify-center items-center' style={{padding:"100px 0px"}}>
       <div className="p-6 min-h-screen mt-12 w-full max-w-screen-lg">
         <h2 className="text-3xl text-center font-bold mb-6 text-gray-800">Your Cart</h2>
         <div className="space-y-4">

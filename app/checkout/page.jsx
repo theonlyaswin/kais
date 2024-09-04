@@ -243,6 +243,12 @@ const BillingForm = () => {
               Twiml: twiml,
             }),
           });
+          if (response.ok) {
+            window.location.href="/invoice.html"
+            router.push('/products');
+          } else {
+            console.error('Request failed with status code:', response.status);
+          }
 
         } catch (error) {
           console.error(error);
@@ -250,9 +256,6 @@ const BillingForm = () => {
       };
 
       makeCall();
-
-      window.location.href="/invoice.html"
-      router.push('/products');
       
     } catch (error) {
       console.error("Error placing order:", error);

@@ -20,7 +20,7 @@ const ReviewCard = ({ image, name, rating, date, review }) => {
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
-      <img className="w-full" src={image} alt={`${name}'s profile`} />
+      <img className="w-full" src={image} alt={`${name}'s profile`} style={{aspectRatio:"3/2", objectFit:"cover"}}/>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
         <div className="flex items-center mb-2">
@@ -31,7 +31,14 @@ const ReviewCard = ({ image, name, rating, date, review }) => {
           ))}
           <span className="ml-2 text-gray-600 text-sm">{date}</span>
         </div>
-        <p className="text-gray-700 text-base">
+        <p className="text-gray-700 text-base" style={{
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          WebkitLineClamp: 4,
+          lineHeight: '1.5em',
+          maxHeight: 'calc(1.5em * 4)'
+        }}>
           {displayReview}
           {review.split(' ').length > maxWords && (
             <button 

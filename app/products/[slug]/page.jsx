@@ -264,7 +264,7 @@ const ProductPage = ({ params }) => {
   if (!product) return <p>Loading...</p>;
   document.title=product.description || "Check out this amazing product at My Store!";
   return (
-    <div className="container mx-auto px-4 my-20">
+    <div className="container mx-auto px-4  mt-12 lg:mt-44">
       <Head>
         <title>{product.title} | My Store</title>
         <meta name="description" content={product.description || "Check out this amazing product at My Store!"} />

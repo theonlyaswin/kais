@@ -18,13 +18,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { db } from './firebase'; 
 import { collection, getDocs, query, limit, doc, getDoc } from 'firebase/firestore';
 
-const truncateReview = (text, wordCount = 10) => {
-  const words = text.split(' ');
-  if (words.length > wordCount) {
-    return words.slice(0, wordCount).join(' ') + '...more';
-  }
-  return text;
-};
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -122,7 +115,7 @@ export default function Home() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:mt-36 mt-24">
       <div className="sec-height banner-1 w-full mb-8 overflow-hidden">
         <Carousel className="w-full h-full" plugins={[bannerCarouselPlugin.current]}>
           <CarouselContent>
@@ -146,6 +139,7 @@ export default function Home() {
             src={category.image} 
             alt={`Category ${category.caption}`} 
             label={category.caption} 
+            link={category.caption} 
           />
         ))}
       </div>
@@ -244,7 +238,7 @@ export default function Home() {
                       name={review.name}
                       rating={review.rating}
                       date={review.date}
-                      review={truncateReview(review.review)}
+                      review={review.review}
                     />
                   </div>
                 </CarouselItem>

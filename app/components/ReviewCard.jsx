@@ -1,6 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ReviewCard = ({ image, name, rating, date, review }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxWords = 20; // Set the maximum number of words before truncation
+
+  const truncateReview = (text, limit) => {
+    const words = text.split(' ');
+    if (words.length > limit) {
+      return words.slice(0, limit).join(' ') + '...';
+    }
+    return text;
+  };
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const displayReview = isExpanded ? review : truncateReview(review, maxWords);
+
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
       <img className="w-full" src={image} alt={`${name}'s profile`} />
@@ -14,7 +31,17 @@ const ReviewCard = ({ image, name, rating, date, review }) => {
           ))}
           <span className="ml-2 text-gray-600 text-sm">{date}</span>
         </div>
-        <p className="text-gray-700 text-base">{review}</p>
+        <p className="text-gray-700 text-base">
+          {displayReview}
+          {review.split(' ').length > maxWords && (
+            <button 
+              onClick={toggleExpand} 
+              className="text-blue-500 hover:text-blue-700 ml-1 focus:outline-none"
+            >
+              {isExpanded ? 'Show less' : '...more'}
+            </button>
+          )}
+        </p>
       </div>
     </div>
   );

@@ -95,7 +95,7 @@ const InfiniteScrollProductsPage = () => {
   }, [selectedCategory]);
 
   return (
-    <div className="flex-grow container mx-auto px-4 py-8 mt-12" ref={pageRef}>
+    <div className="flex-grow container mx-auto px-4 py-8 mt-32" ref={pageRef}>
       <h1 className="text-2xl lg:text-3xl font-bold mb-6 text-center">All Products</h1>
 
       {/* Category Dropdown */}

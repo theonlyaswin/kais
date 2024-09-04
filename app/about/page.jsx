@@ -1,6 +1,6 @@
 const AboutUs = () => {
   return (
-    <div className="container mx-auto px-4 py-12 my-12 relative">
+    <div className="container mx-auto px-4 py-12 my-32 relative">
       {/* Background Illustrations */}
       <div className="absolute inset-0 -z-10 opacity-10">
         <img 
@@ -35,11 +35,11 @@ const AboutUs = () => {
 
       {/* Essence of Kai Section */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">The Essence of Kai</h2>
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">The Essence of Kai's</h2>
         <div className="flex justify-center items-center gap-8 text-center">
           <div className="md:w-1/2">
             <p className="text-lg text-gray-600 leading-relaxed">
-              Kai, the heart and soul of our studio, represents more than just a name. It's a philosophy — a celebration of individuality, style, and the pursuit of a balanced, vibrant life. From cutting-edge design to wellness practices that nourish the mind and body, Kai's Lifestyle Studio is a tribute to a lifestyle that embraces the extraordinary.
+              Kai's, the heart and soul of our studio, represents more than just a name. It's a philosophy — a celebration of individuality, style, and the pursuit of a balanced, vibrant life. From cutting-edge design to wellness practices that nourish the mind and body, Kai's Lifestyle Studio is a tribute to a lifestyle that embraces the extraordinary.
             </p>
           </div>
         </div>
